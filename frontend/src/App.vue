@@ -191,8 +191,14 @@
           </div>
 
           <div class="modal-footer">
-            <button @click="downloadReport(selectedScan.task_id)" v-if="selectedScan.status === 'completed'">
-              下载完整报告
+            <button @click="viewHtmlReport(selectedScan.task_id)" v-if="selectedScan.status === 'completed'" class="btn-secondary">
+              📄 查看网页报告
+            </button>
+            <button @click="downloadPdfReport(selectedScan.task_id)" v-if="selectedScan.status === 'completed'" class="btn-secondary">
+              📑 下载 PDF
+            </button>
+            <button @click="downloadJsonReport(selectedScan.task_id)" v-if="selectedScan.status === 'completed'">
+              📥 下载 JSON
             </button>
           </div>
         </div>
@@ -266,9 +272,17 @@ export default {
         alert('获取详情失败：' + error.message)
       }
     },
+
+    viewHtmlReport(taskId) {
+      window.open(`${API_URL}/api/scan/${taskId}/report/html`, '_blank')
+    },
     
-    downloadReport(taskId) {
-      window.open(`${API_URL}/api/scan/${taskId}/report`, '_blank')
+    downloadPdfReport(taskId) {
+      window.open(`${API_URL}/api/scan/${taskId}/report/pdf`, '_blank')
+    },
+    
+    downloadJsonReport(taskId) {
+      window.open(`${API_URL}/api/scan/${taskId}/report/json`, '_blank')
     },
     
     getStatusText(status) {
@@ -858,6 +872,18 @@ button:disabled {
   position: sticky;
   bottom: 0;
   background: white;
+}
+
+.btn-secondary {
+  background: #6b7280;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+}
+
+.modal-footer button {
+  margin-left: 8px;
 }
 
 /* 响应式设计 */

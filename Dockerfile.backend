@@ -1,7 +1,5 @@
-# Dockerfile.backend (优化版)
 FROM python:3.11-alpine
 
-# 安装系统依赖
 RUN apk add --no-cache \
     curl \
     bash \
@@ -9,33 +7,20 @@ RUN apk add --no-cache \
     ca-certificates \
     && rm -rf /var/cache/apk/*
 
-# 安装 Trivy
-RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin && \
-    trivy --version
+RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
 
 WORKDIR /app
 
-# 复制并安装 Python 依赖
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 复制应用代码
 COPY backend/ .
 
-# 创建扫描结果目录并设置权限
-RUN mkdir -p /app/scan_results && \
-    chmod 777 /app/scan_results && \
-    ls -la /app/
+RUN mkdir -p /app/scan_results && chmod 777 /app/scan_results
 
-# 设置环境变量
 ENV TRIVY_CACHE_DIR=/root/.cache/trivy
 ENV PYTHONUNBUFFERED=1
 
 EXPOSE 8000
 
-# 启动时显示调试信息
-CMD ["sh", "-c", "echo '启动扫描服务...' && \
-     echo 'Trivy 版本:' && trivy version && \
-     echo 'Python 版本:' && python --version && \
-     echo '扫描目录:' && ls -la /app/scan_results && \
-     python app.py"]
+CMD ["python", "app.py"]

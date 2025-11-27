@@ -7,6 +7,7 @@ echo "🚀 Deploying Trivy Scanner Service..."
 mkdir -p frontend/src backend
 
 # 构建并启动服务
+# docker-compose down -v
 docker-compose down
 docker-compose build --no-cache
 docker-compose up -d
