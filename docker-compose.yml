@@ -28,8 +28,6 @@ services:
     restart: unless-stopped
     networks:
       - trivy-network
-    environment:
-      - VITE_API_URL=http://localhost:8000
 
 volumes:
   trivy-cache:
