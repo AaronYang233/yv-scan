@@ -1,0 +1,40 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: trivy-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - trivy-cache:/root/.cache/trivy
+      - scan-results:/app/scan_results
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - TRIVY_CACHE_DIR=/root/.cache/trivy
+    restart: unless-stopped
+    networks:
+      - trivy-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: trivy-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - trivy-network
+    environment:
+      - VITE_API_URL=http://localhost:8000
+
+volumes:
+  trivy-cache:
+  scan-results:
+
+networks:
+  trivy-network:
+    driver: bridge
